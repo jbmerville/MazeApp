@@ -7,13 +7,13 @@ const Row = (props) => {
     // Generate the cell components of based on an array.
     let cells = [];
     for (let i = 0; i < props.arr.length; i++) {
-        cells.push(<Cell type={props.arr[i]} row={props.index} column={i}></Cell>);
+        cells.push(<Cell type={props.arr[i]} row={props.row} column={i} key={i} hold={props.hold}></Cell>);
     }
 
     return (
-        <div className={"row"} key={props.row}>
+        <tr className={"row"} key={props.row}>
             {cells}
-        </div>
+        </tr>
     );
 };
 

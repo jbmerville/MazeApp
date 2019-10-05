@@ -3,31 +3,48 @@ import React from "react";
 class Cell extends React.Component {
     constructor(props) {
         super(props);
-        let cls = "default";
+        this.toWall = this.toWall.bind(this);
+        let type = this.getType(props);
+        this.state = { type: type, hold: props.hold };
+    }
+
+    getType(props) {
+        let type = "default";
         if (props.type === 0) {
-            cls = "unvisited";
+            type = "unvisited";
         }
-        if (props.type == 1) {
-            cls = "walls";
+        if (props.type === 1) {
+            type = "wall";
         }
-        if (props.type == 2) {
-            cls = "start";
+        if (props.type === 2) {
+            type = "start";
         }
-        if (props.type == 3) {
-            cls = "end";
+        if (props.type === 3) {
+            type = "end";
         }
-        if (props.type == 4) {
-            cls = "visiting";
+        if (props.type === 4) {
+            type = "visiting";
         }
-        this.state = { cls: cls };
+        return type;
+    }
+
+    toWall() {
+        if (!this.state.hold) this.setState({ type: "wall" });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.hold !== this.props.hold) {
+            this.setState({ hold: this.props.hold });
+        }
     }
 
     render() {
         return (
-            <div
-                className={"cell " + this.state.cls}
+            <td 
+                className={"cell " + this.state.type}
                 key={this.state.row + "-" + this.state.column}
-            ></div>
+                onMouseMove={this.toWall}
+            ></td>
         );
     }
 }
