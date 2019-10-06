@@ -1,48 +1,157 @@
 import React from "react";
-import Row from "./Row";
+import Cell from "./Cell";
 
 class Grid extends React.Component {
     constructor(props) {
         super(props);
-        // 2D array of size N*2N
-        let grid = new Array(this.props.height)
-            .fill(0)
-            .map(() => new Array(this.props.width).fill(0));
-        let gridComponent = [];
-        for (let i = 0; i < grid.length; i++) {
-            gridComponent.push(<Row arr={grid[i]} row={i} key={i} hold={true}></Row>);
-        }
-        this.state = { grid: grid, gridComponent: gridComponent, hold: false };
+        // this.down = this.down.bind(this);
+        // this.up = this.up.bind(this);
+        this.state = {
+            grid: [],
+            height: props.height,
+            width: props.width,
+            hold: true
+        };
     }
 
-    // Renders the Grid Components based on the grid 2D array.
-    renderGrid(grid) {
-        let gridComponent = [];
-        for (let i = 0; i < grid.length; i++) {
-            gridComponent.push(<Row arr={grid[i]} row={i} key={i} hold={this.state.hold}></Row>);
+    componentDidMount() {
+        const grid = [];
+        for (let i = 0; i < this.state.height; i++) {
+            const row = [];
+            for (let j = 0; j < this.state.width; j++) {
+                const node = {
+                    row: i,
+                    col: j,
+                    type: "univisited"
+                };
+                this.setDefault(node);
+                row.push(node);
+            }
+            grid.push(row);
         }
-        this.setState({ gridComponent: gridComponent });
+        this.setState({ grid: grid });
+    }
+
+    setDefault(node) {
+        let i = node.row;
+        let j = node.col;
+        let k = 9;
+        let u = 7;
+        if (i == k) {
+            if (
+                j == u ||
+                j == u + 3 ||
+                j == u + 5 ||
+                j == u + 6 ||
+                j == u + 7 ||
+                j == u + 9 ||
+                j == u + 13 ||
+                j == u + 17 ||
+                j == u + 18 ||
+                j == u + 19 ||
+                j == u + 20
+            )
+                node.type = "wall";
+        }
+        if (i == k + 1) {
+            if (
+                j == u ||
+                j == u + 3 ||
+                j == u + 5 ||
+                j == u + 9 ||
+                j == u + 13 ||
+                j == u + 17 ||
+                j == u + 20
+            )
+                node.type = "wall";
+        }
+        if (i == k + 2) {
+            if (
+                j == u ||
+                j == u + 1 ||
+                j == u + 2 ||
+                j == u + 3 ||
+                j == u + 5 ||
+                j == u + 6 ||
+                j == u + 7 ||
+                j == u + 9 ||
+                j == u + 13 ||
+                j == u + 17 ||
+                j == u + 20
+            )
+                node.type = "wall";
+        }
+        if (i == k + 3) {
+            if (
+                j == u ||
+                j == u + 3 ||
+                j == u + 5 ||
+                j == u + 9 ||
+                j == u + 13 ||
+                j == u + 17 ||
+                j == u + 20
+            )
+                node.type = "wall";
+        }
+        if (i == k + 4) {
+            if (
+                j == u ||
+                j == u + 3 ||
+                j == u + 5 ||
+                j == u + 6 ||
+                j == u + 7 ||
+                j == u + 9 ||
+                j == u + 10 ||
+                j == u + 11 ||
+                j == u + 13 ||
+                j == u + 14 ||
+                j == u + 15 ||
+                j == u + 17 ||
+                j == u + 18 ||
+                j == u + 19 ||
+                j == u + 20
+            )
+                node.type = "wall";
+        }
+        return node;
     }
 
     // Turn on hover.
     down = event => {
-        this.setState({hold: true});
-        this.renderGrid(this.state.grid);
-    }
+        this.setState({ hold: false });
+    };
 
     // Turn off hover.
     up = event => {
-        this.setState({hold: false});
-        this.renderGrid(this.state.grid);
-    }
+        this.setState({ hold: true });
+    };
 
     render() {
+        const { grid } = this.state;
         return (
-            <div>
-                <table>
-                    <tbody className="grid" onMouseDown={this.down} onMouseUp={this.up}>{this.state.gridComponent}</tbody>
-                </table>
-            </div>
+            <table>
+                <tbody
+                    className="grid"
+                    onMouseDown={this.down}
+                    onMouseUp={this.up}
+                >
+                    {grid.map((row, rowIdx) => {
+                        return (
+                            <tr className={"row"} key={rowIdx}>
+                                {row.map((node, nodeIdx) => {
+                                    return (
+                                        <Cell
+                                            node={node}
+                                            hold={this.state.hold}
+                                            key={node.row + "-" + node.col}
+                                        ></Cell>
+                                    );
+                                })}
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
         );
     }
 }

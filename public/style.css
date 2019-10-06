@@ -1,55 +1,117 @@
+:root {
+  /* --main-bg-color: #05021c;
+--accent: #171dde; */
+  /* --main-bg-color: #05021c;
+--accent: #5d88ff; */
+  --main-bg-color: #f6f6f6;
+  --accent: #2063d3;
+}
+
+body {
+  background: var(--main-bg-color);
+}
+
 .row {
-    display: table-row;
-    vertical-align: inherit;
-    border-color: inherit;
-    box-sizing: border-box;
+  display: table-row;
+  vertical-align: inherit;
+  border-color: inherit;
+  box-sizing: border-box;
 }
 
 .cell {
-    width: 25px;
-    height: 25px;
-    border: 1px solid #480469;
-    display: table-cell;
-    vertical-align: inherit;
-    box-sizing: border-box;
-    user-drag: none;
-    user-select: none;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--accent);
+  display: table-cell;
+  vertical-align: inherit;
+  box-sizing: border-box;
+  user-drag: none;
+  user-select: none;
 }
 
 .wall {
-	-webkit-animation: fade-in 0.2s both;
-	        animation: fade-in 0.2s both;
-    background: #bb2fff;
+  -webkit-animation: fade-in 0.6s both;
+  animation: fade-in 0.6s both;
+  background: var(--accent);
 }
 
+.unvisited {
+}
+.button-container {
+  margin-left: 5px;
+  margin-bottom: 28px;
+  cursor: pointer;
+  padding: 5px;
+  text-align: center;
+  height: 50px;
+  -webkit-transition-duration: 0.12s;
+  transition-duration: 0.12s;
+  opacity: 1;
+  border: 1px solid var(--accent);
+}
+.button-container:hover {
+  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
+      0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 8px 0 rgba(0, 0, 0, 0.12);
+}
+.button-container:hover .button-subtext {
+  opacity: 1;
+}
+
+.button-text {
+  color: var(--accent);
+  text-align: center;
+  top: 8px;
+  position: relative;
+  vertical-align: middle;
+  font-family: Open Sans;
+  font-size: 24px;
+  letter-spacing: 0.28px;
+}
+.button-subtext {
+  -webkit-transition-duration: 0.12s;
+  transition-duration: 0.12s;
+  opacity: 0;
+  font-family: Roboto;
+  font-size: 14px;
+  line-height: 20px;
+  color: #424242;
+  margin-top: 4px;
+}
+.container {
+  height: fit-content;
+  position: relative;
+}
+.side-bar {
+  height: 100%;
+  right: 0;
+  position: absolute;
+  width: 285px;
+}
 
 .grid {
-    display: table-row-group;
-    vertical-align: middle;
-    border-color: inherit;
+  display: table-row-group;
+  vertical-align: middle;
+  border-color: inherit;
 }
 
 table {
-    border-spacing: 0;
-    border-collapse: collapse;
+  border-spacing: 0;
+  border-collapse: collapse;
 }
 
 @-webkit-keyframes fade-in {
-    0% {
+  0% {
       opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
   }
-  @keyframes fade-in {
-    0% {
+  100% {
+      opacity: 1;
+  }
+}
+@keyframes fade-in {
+  0% {
       opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
   }
-  
-  
-  
+  100% {
+      opacity: 1;
+  }
+}
