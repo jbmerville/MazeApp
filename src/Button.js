@@ -2,10 +2,13 @@ import React from "react"
 
 const Button = (props) => {
 
+    const click = event => {
+        props.onClick();
+    }
+
     return (
-        <div className="button-container">
+        <div className="button-container" onClick={click}>
             <div className="button-text">{props.text}</div>
-            <div className="button-subtext">{props.subtext}</div>
         </div>
     );
 

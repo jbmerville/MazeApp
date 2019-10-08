@@ -5,18 +5,28 @@ class Cell extends React.Component {
         super(props);
         this.toWall = this.toWall.bind(this);
         this.lock = this.lock.bind(this);
-        this.unlock = this.unlock.bind(this);
         this.click = this.click.bind(this);
+        this.drag = this.drag.bind(this);
+        this.makeCurrent = this.makeCurrent.bind(this);
         this.state = {
             node: props.node,
             hold: props.hold,
-            locked: true
+            locked: true,
+            drag: props.drag,
+            lockAll: props.lockAll,
+            current: props.current
         };
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.hold !== this.props.hold) {
+            this.setState({ hold: this.props.hold, drag: this.props.drag });
+        }
+    }
+
+    // Changes the nodes 
     toWall() {
-        
-        if (!this.state.hold && this.state.locked) {
+        if (!this.state.hold && !this.state.drag && this.state.locked) {
             if (this.state.node.type !== "wall") {
                 let node = this.state.node;
                 node.type = "wall";
@@ -26,28 +36,18 @@ class Cell extends React.Component {
                 node.type = "unvisited";
                 this.setState({ node: node });
             }
-            this.lock();
-        }
+        } 
+        this.lock(true);
     }
 
-    lock() {
+
+    lock(bool) {
         if (!this.state.hold) {
-            this.setState({ locked: false });
+            this.setState({ locked: bool });
         }
     }
 
-    unlock() {
-        if (!this.state.hold) {
-            this.setState({ locked: true });
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.hold !== this.props.hold) {
-            this.setState({ hold: this.props.hold });
-        }
-    }
-
+    // Turn on and off walls on click.
     click() {
         if (this.state.node.type !== "wall") {
             let node = this.state.node;
@@ -60,13 +60,39 @@ class Cell extends React.Component {
         }
     }
 
+    // Drag the start and end nodes.
+    drag() {
+        let node = this.state.node;
+        this.state.lockAll(this.state.node.type);
+        node.type = "unvisited";
+    }
+
+    // Update which node the user is currently hovering.
+    makeCurrent() {
+        this.state.current(this.state.node);
+    }
+
     render() {
+        if (this.state.node.type === "start" || this.state.node.type === "end") {
+            return (
+                <td
+                    className={"cell " + this.state.node.type}
+                    onMouseEnter={this.toWall}
+                    onMouseLeave={(e) => this.lock(true)}
+                    onClick={this.click}
+                    onMouseDown={this.drag}
+                    onMouseOver={this.makeCurrent}
+                ></td>
+            );
+        }
+
         return (
             <td
                 className={"cell " + this.state.node.type}
                 onMouseEnter={this.toWall}
-                onMouseLeave={this.unlock}
+                onMouseLeave={(e) => this.lock(true)}
                 onClick={this.click}
+                onMouseOver={this.makeCurrent}
             ></td>
         );
     }

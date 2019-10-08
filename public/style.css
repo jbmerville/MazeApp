@@ -1,117 +1,172 @@
 :root {
-  /* --main-bg-color: #05021c;
+    /* --main: #05021c;
 --accent: #171dde; */
-  /* --main-bg-color: #05021c;
+    /* --main: #05021c;
 --accent: #5d88ff; */
-  --main-bg-color: #f6f6f6;
-  --accent: #2063d3;
+    --main: white;
+    /* --accent: #292929; */
+    --accent: #0037d4;
+    --hover: #ecf0f1;
 }
 
 body {
-  background: var(--main-bg-color);
+    background: var(--main);
+    position: relative;
+    margin: 0;
+    display: block;
+    padding: 0;
+    height: 100%;
+}
+.title-container {
+    background: var(--accent);
+    padding: 15px;
+    margin-bottom: 10px;
+}
+.cell-drag {
+    height: 30px;
+    width: 30px;
+    background: blueviolet;
+}
+
+.section-instruction {
+    font-family: sans-serif;
+    margin-top: 10px;
+    position: relative;
+    margin-bottom: 10px;
+    line-height: 2em;
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.section-text {
+    font-weight: 100;
+    font-family: Open Sans;
+    border-bottom: 1px solid var(--hover);
+    margin-bottom: 10px;
+    color: var(--accent);
 }
 
 .row {
-  display: table-row;
-  vertical-align: inherit;
-  border-color: inherit;
-  box-sizing: border-box;
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit;
+    box-sizing: border-box;
 }
 
 .cell {
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--accent);
-  display: table-cell;
-  vertical-align: inherit;
-  box-sizing: border-box;
-  user-drag: none;
-  user-select: none;
+    width: 30px;
+    height: 30px;
+    /* border: 1px solid var(--accent); */
+    display: table-cell;
+    vertical-align: inherit;
+    box-sizing: border-box;
+    user-drag: none;
+    user-select: none;
 }
 
 .wall {
-  -webkit-animation: fade-in 0.6s both;
-  animation: fade-in 0.6s both;
-  background: var(--accent);
+    -webkit-animation: fade-in 0.6s both;
+    animation: fade-in 0.6s both;
+    background: var(--accent);
 }
 
 .unvisited {
+    background: var(--main);
+}
+
+.end {
+    background: red;
+}
+
+.start {
+    background: #00da00;
 }
 .button-container {
-  margin-left: 5px;
-  margin-bottom: 28px;
-  cursor: pointer;
-  padding: 5px;
-  text-align: center;
-  height: 50px;
-  -webkit-transition-duration: 0.12s;
-  transition-duration: 0.12s;
-  opacity: 1;
-  border: 1px solid var(--accent);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 10px;
+    -webkit-transition-duration: 0.12s;
+    transition-duration: 0.12s;
 }
 .button-container:hover {
-  box-shadow: 0 3px 3px -2px rgba(0, 0, 0, 0.2),
-      0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 1px 8px 0 rgba(0, 0, 0, 0.12);
+    background: var(--hover);
 }
 .button-container:hover .button-subtext {
-  opacity: 1;
+    opacity: 1;
 }
 
 .button-text {
-  color: var(--accent);
-  text-align: center;
-  top: 8px;
-  position: relative;
-  vertical-align: middle;
-  font-family: Open Sans;
-  font-size: 24px;
-  letter-spacing: 0.28px;
+    color: var(--accent);
+    font-weight: bold;
+    margin-left: 10px;
+    text-align: left;
+    position: relative;
+    font-family: Open Sans;
+    font-size: 15px;
+    user-select: none;
+}
+.tutorial {
+    position: absolute;
+    width: 200px;
+}
+.title {
+    font-family: Open Sans;
+    font-weight: bolder;
+    font-size: 52px;
+    color: var(--main);
+    margin-bottom: 10px;
 }
 .button-subtext {
-  -webkit-transition-duration: 0.12s;
-  transition-duration: 0.12s;
-  opacity: 0;
-  font-family: Roboto;
-  font-size: 14px;
-  line-height: 20px;
-  color: #424242;
-  margin-top: 4px;
+    -webkit-transition-duration: 0.12s;
+    transition-duration: 0.12s;
+    opacity: 0;
+    font-family: Roboto;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--accent);
+    margin-top: 4px;
 }
 .container {
-  height: fit-content;
-  position: relative;
+    margin: 10px;
+    position: relative;
 }
 .side-bar {
-  height: 100%;
-  right: 0;
-  position: absolute;
-  width: 285px;
+    height: -webkit-fill-available;
+    padding: 10px;
+    right: 0;
+    position: absolute;
+    width: 190px;
 }
 
 .grid {
-  display: table-row-group;
-  vertical-align: middle;
-  border-color: inherit;
+    display: table-row-group;
+    vertical-align: middle;
+    border-color: inherit;
 }
 
 table {
-  border-spacing: 0;
-  border-collapse: collapse;
+    border: 5px solid var(--accent);
+    margin-left: 210px;
+    border-spacing: 0;
+    border-collapse: collapse;
 }
 
 @-webkit-keyframes fade-in {
-  0% {
-      opacity: 0;
-  }
-  100% {
-      opacity: 1;
-  }
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
 @keyframes fade-in {
-  0% {
-      opacity: 0;
-  }
-  100% {
-      opacity: 1;
-  }
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
