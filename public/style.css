@@ -1,14 +1,25 @@
 :root {
-    /* --main: #05021c;
---accent: #171dde; */
-    /* --main: #05021c;
---accent: #5d88ff; */
-    --main: white;
-    /* --accent: #292929; */
-    --accent: #0037d4;
+    --main: #267dfc;
+    --accent: #9cd0fe;
+    --side: white;
     --hover: #ecf0f1;
+    --wall: #3f51b5;
+    --button: whitesmoke;
+
+    --border: #d5eefe;
+    --button1: #b9b8b8;
+    --hover1: #adacac;
+    --side1: #c3c3c3;
+    --main1: #262525;
+    --accent1: #172c99;
+    --wall1: #9fa8da;
+    
 }
 
+html,
+#root {
+    height: 100%;
+}
 body {
     background: var(--main);
     position: relative;
@@ -17,10 +28,10 @@ body {
     padding: 0;
     height: 100%;
 }
+
 .title-container {
-    background: var(--accent);
-    padding: 15px;
-    margin-bottom: 10px;
+    padding: 10px;
+    margin-bottom: 33px;
 }
 .cell-drag {
     height: 30px;
@@ -31,19 +42,20 @@ body {
 .section-instruction {
     font-family: sans-serif;
     margin-top: 10px;
+    text-align: left;
+    margin-bottom: 35px !important;
     position: relative;
-    margin-bottom: 10px;
-    line-height: 2em;
-    color: var(--accent);
-    font-weight: bold;
+    margin: 10px;
+    line-height: 1.4em;
+    color: var(--main);
 }
 
 .section-text {
-    font-weight: 100;
     font-family: Open Sans;
     border-bottom: 1px solid var(--hover);
     margin-bottom: 10px;
-    color: var(--accent);
+    color: #000a82;
+    font-size: 23px;
 }
 
 .row {
@@ -54,9 +66,10 @@ body {
 }
 
 .cell {
+    cursor: pointer;
+    border: 1px solid var(--border);
     width: 30px;
     height: 30px;
-    /* border: 1px solid var(--accent); */
     display: table-cell;
     vertical-align: inherit;
     box-sizing: border-box;
@@ -65,23 +78,25 @@ body {
 }
 
 .wall {
+    border: none;
     -webkit-animation: fade-in 0.6s both;
     animation: fade-in 0.6s both;
-    background: var(--accent);
+    background: var(--wall);
 }
 
 .unvisited {
-    background: var(--main);
+    background: var(--accent);
 }
 
 .end {
-    background: red;
+    background: #cc121b;
 }
 
 .start {
-    background: #00da00;
+    background: #029083;
 }
 .button-container {
+    background: var(--button);
     border-radius: 3px;
     cursor: pointer;
     margin-top: 20px;
@@ -97,9 +112,14 @@ body {
 .button-container:hover .button-subtext {
     opacity: 1;
 }
-
+.section {
+    position: relative;
+    top: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
 .button-text {
-    color: var(--accent);
+    color: var(--main);
     font-weight: bold;
     margin-left: 10px;
     text-align: left;
@@ -109,8 +129,15 @@ body {
     user-select: none;
 }
 .tutorial {
-    position: absolute;
+    background: var(--side);
+    height: 670px;
+    padding: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+    position: relative;
     width: 200px;
+    box-shadow: -4px 4px 0 0px #00000030;
 }
 .title {
     font-family: Open Sans;
@@ -126,32 +153,46 @@ body {
     font-family: Roboto;
     font-size: 14px;
     line-height: 20px;
-    color: var(--accent);
+    color: var(--main);
     margin-top: 4px;
 }
 .container {
     margin: 10px;
+    height: -webkit-fill-available;
     position: relative;
 }
 .side-bar {
-    height: -webkit-fill-available;
-    padding: 10px;
-    right: 0;
-    position: absolute;
-    width: 190px;
+    background: var(--side);
+    height: 670px;
+    padding: 15px;
+    float: right;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    box-shadow: -4px 4px 0 0px #00000030;
 }
 
 .grid {
+    cursor: pointer;
+    border-radius: 0px;
     display: table-row-group;
     vertical-align: middle;
     border-color: inherit;
 }
 
 table {
-    border: 5px solid var(--accent);
-    margin-left: 210px;
+    cursor: pointer;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: auto;
+    display: inline-block;
+    z-index: 1;
+    position: absolute;
     border-spacing: 0;
     border-collapse: collapse;
+    box-shadow: -4px 4px 0 0px #00000030;
 }
 
 @-webkit-keyframes fade-in {

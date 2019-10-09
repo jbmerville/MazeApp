@@ -5,52 +5,40 @@ class SideBar extends React.Component {
     constructor(props) {
         super(props);
         this.switchColors = this.switchColors.bind(this);
-        let mainColor = getComputedStyle(
-            document.documentElement
-        ).getPropertyValue("--main");
-        let accentColor = getComputedStyle(
-            document.documentElement
-        ).getPropertyValue("--accent");
-        let hoverColor = getComputedStyle(
-            document.documentElement
-        ).getPropertyValue("--hover");
+        this.reset = this.reset.bind(this);
         this.state = {
-            mainColor: mainColor,
-            accentColor: accentColor,
-            hoverColor: hoverColor,
-            darkMode: false
+            reset: props.reset
         };
     }
 
     switchColors() {
-        let darkMode = this.state.darkMode;
-        if (!darkMode) {
-            document.documentElement.style.setProperty(
-                "--main",
-                this.state.accentColor
-            );
-            document.documentElement.style.setProperty(
-                "--accent",
-                this.state.mainColor
-            );
-            document.documentElement.style.setProperty("--hover", "#0029a9");
-            darkMode = true;
-        } else {
-            document.documentElement.style.setProperty(
-                "--main",
-                this.state.mainColor
-            );
-            document.documentElement.style.setProperty(
-                "--accent",
-                this.state.accentColor
-            );
-            document.documentElement.style.setProperty(
-                "--hover",
-                this.state.hoverColor
-            );
-            darkMode = false;
-        }
-        this.setState({ darkMode: darkMode });
+        this.swapCSSvar("main");
+        this.swapCSSvar("button");
+        this.swapCSSvar("hover");
+        this.swapCSSvar("side");
+        this.swapCSSvar("wall");
+        this.swapCSSvar("accent");
+    }
+
+    swapCSSvar(property) {
+        let temp = getComputedStyle(document.documentElement).getPropertyValue(
+            "--" + property
+        );
+        document.documentElement.style.setProperty(
+            "--" + property,
+            getComputedStyle(document.documentElement).getPropertyValue(
+                "--" + property + "1"
+            )
+        );
+        document.documentElement.style.setProperty(
+            "--" + property + "1",
+            temp
+        );
+    }
+    
+
+    reset() {
+        this.state.reset();
     }
 
     render() {
@@ -60,6 +48,7 @@ class SideBar extends React.Component {
                     <div className="section-text">Controls</div>
 
                     <Button
+                        onClick={this.reset}
                         text={"Reset"}
                         subtext={"Click to reset the grid to an empty grid."}
                     ></Button>

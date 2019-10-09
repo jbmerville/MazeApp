@@ -5,6 +5,7 @@ class Grid extends React.Component {
     constructor(props) {
         super(props);
         this.makeCurrent = this.makeCurrent.bind(this);
+        this.reset = this.reset.bind(this);
         this.state = {
             grid: [],
             height: props.height,
@@ -16,6 +17,11 @@ class Grid extends React.Component {
     }
 
     componentDidMount() {
+        this.reset(true);
+    }
+
+    reset(message) {
+        console.log(this);
         const grid = [];
         for (let i = 0; i < this.state.height; i++) {
             const row = [];
@@ -25,11 +31,14 @@ class Grid extends React.Component {
                     col: j,
                     type: "unvisited"
                 };
-                this.setDefault(node);
+                if (message) this.setDefault(node);
+                if (i === 3 && j === this.state.width - 3) node.type = "end";
+                if (i === this.state.height - 3 && j === 3) node.type = "start"
                 row.push(node);
             }
             grid.push(row);
         }
+        console.log(grid);
         this.setState({ grid: grid });
     }
 
@@ -115,8 +124,6 @@ class Grid extends React.Component {
             )
                 node.type = "wall";
         }
-        if (i == 3 && j == this.state.width - 3) node.type = "end";
-        if (i == this.state.height - 3 && j == 3) node.type = "start";
         return node;
     }
 

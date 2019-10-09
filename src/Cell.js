@@ -27,11 +27,11 @@ class Cell extends React.Component {
     // Changes the nodes 
     toWall() {
         if (!this.state.hold && !this.state.drag && this.state.locked) {
-            if (this.state.node.type !== "wall") {
+            if (this.state.node.type === "unvisited") {
                 let node = this.state.node;
                 node.type = "wall";
                 this.setState({ node: node });
-            } else {
+            } else if (this.state.node.type === "wall") {
                 let node = this.state.node;
                 node.type = "unvisited";
                 this.setState({ node: node });
@@ -49,11 +49,11 @@ class Cell extends React.Component {
 
     // Turn on and off walls on click.
     click() {
-        if (this.state.node.type !== "wall") {
+        if (this.state.node.type === "unvisited") {
             let node = this.state.node;
             node.type = "wall";
             this.setState({ node: node });
-        } else {
+        } else if (this.state.node.type === "wall") {
             let node = this.state.node;
             node.type = "unvisited";
             this.setState({ node: node });

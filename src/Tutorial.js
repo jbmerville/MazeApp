@@ -12,7 +12,7 @@ const Tutorial = props => {
             <div className="section">
                 <div className="section-text">Step 1</div>
                 <div className="section-instruction">
-                    Draw the a maze by holding down your mouse on the gird.
+                    Draw a maze by holding down your mouse on the gird.
                 </div>
             </div>
             <div className="section">

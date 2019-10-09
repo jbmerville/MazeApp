@@ -11,19 +11,20 @@ let size = 30;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        let width = window.innerWidth - 450;
+        this.ref = React.createRef();
+        let width = window.innerWidth - 480;
         let height = window.innerHeight - 20;
         this.state = { width: Math.floor(width/size), height: Math.floor(height/size)};
     }
 
-
+    
 
     render() {
         return (
             <div className="container">
                 <Tutorial></Tutorial>
-                <SideBar></SideBar>
-                <Grid height={this.state.height} width={this.state.width} ></Grid>
+                <Grid height={this.state.height} width={this.state.width} ref={this.ref}></Grid>
+                <SideBar reset={(e) => this.ref.current.reset(false)}></SideBar>
             </div>
         );
     }
