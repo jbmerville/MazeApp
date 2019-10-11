@@ -18,10 +18,10 @@ class Grid extends React.Component {
 
     componentDidMount() {
         this.reset(true);
+        this.recursiveBacktracking();
     }
 
     reset(message) {
-        console.log(this);
         const grid = [];
         for (let i = 0; i < this.state.height; i++) {
             const row = [];
@@ -32,13 +32,12 @@ class Grid extends React.Component {
                     type: "unvisited"
                 };
                 if (message) this.setDefault(node);
-                if (i === 3 && j === this.state.width - 3) node.type = "end";
-                if (i === this.state.height - 3 && j === 3) node.type = "start"
+                if (i === 0 && j === 0) node.type = "start";
+                if (i === this.state.height - 1 && j === this.state.width - 1) node.type = "end";
                 row.push(node);
             }
             grid.push(row);
         }
-        console.log(grid);
         this.setState({ grid: grid });
     }
 
@@ -135,34 +134,81 @@ class Grid extends React.Component {
     // Turn off hover.
     up = event => {
         this.setState({ hold: true });
-        if (this.state.drag[0]) 
-        {
+        if (this.state.drag[0]) {
             this.state.current.type = this.state.drag[1];
             this.setState({ drag: [false, null] });
         }
     };
 
-
     // Lock wall creation while moving the start and end states.
     lockAll = event => {
-        if (!this.state.drag[0]) this.setState({ drag: [true, this.state.current.type] });
+        if (!this.state.drag[0])
+            this.setState({ drag: [true, this.state.current.type] });
     };
 
     // Update which node the user is currently hovering.
     makeCurrent(node) {
-        this.setState({current: node});
+        this.setState({ current: node });
     }
 
     // ---- Justin's method go here ----
 
+    // Make an async function sleep for time in milliseconds.
+    sleep = time => {
+        return new Promise(resolve => setTimeout(resolve, time));
+    };
 
+    async recursiveBacktracking() {
+        let stack = [];
+        await this.sleep(10);
+        let grid = this.state.grid;
+        let cur = grid[0][0];
+        stack.push(cur);
+        this.setState({ grid: grid });
+        let neighbours = this.getNeighbours(cur);
+        while (stack.length > 0) {
+            if (neighbours.length > 0) {
+                stack.push(cur);
+                let rand = Math.floor(Math.random() * neighbours.length);
+                for (let i = 0; i < neighbours.length; i++) {
+                    if (i != rand && i != rand-1) {
+                        neighbours[i].type = "wall";
+                    }
+                }
+                cur = neighbours[rand];
+                stack.push(cur);
+                cur.type = "current";
+                this.setState({ grid: grid });
+                await this.sleep(10);
+                cur.type = "visitited";
+                this.setState({ grid: grid });
+                neighbours = this.getNeighbours(cur);
+            }
+            else if (stack.length > 0) {
+                cur = stack.pop();
+                while (stack.length > 0 && this.getNeighbours(cur).length == 0){
+                    cur = stack.pop();
+                }
+                neighbours = this.getNeighbours(cur);
+            }
+        }
+    }
 
-
-
-
-
-
-
+    getNeighbours(node) {
+        let grid = this.state.grid;
+        let neighbours = [];
+        let i = node.row;
+        let j = node.col;
+        if (i > 0 && grid[i - 1][j].type == "unvisited")
+            neighbours.push(grid[i - 1][j]);
+        if (i < grid.length - 1 && grid[i + 1][j].type == "unvisited")
+            neighbours.push(grid[i + 1][j]);
+        if (j > 0 && grid[i][j - 1].type == "unvisited")
+            neighbours.push(grid[i][j - 1]);
+        if (j < grid[0].length - 1 && grid[i][j + 1].type == "unvisited")
+            neighbours.push(grid[i][j + 1]);
+        return neighbours;
+    }
 
     // ----
 

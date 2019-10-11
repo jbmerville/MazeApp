@@ -66,6 +66,7 @@ body {
 }
 
 .cell {
+    background:  var(--accent);
     cursor: pointer;
     border: 1px solid var(--border);
     width: 30px;
@@ -83,11 +84,20 @@ body {
     animation: fade-in 0.6s both;
     background: var(--wall);
 }
+.bottom-wall {
+    box-shadow: inset 0px -3px 0px #00000026;
+}
 
 .unvisited {
     background: var(--accent);
 }
-
+.visited {
+    animation: fade-in 0.8s both;
+    background: var(--accent);
+}
+.current {
+    background: yellow;
+}
 .end {
     background: #cc121b;
 }
