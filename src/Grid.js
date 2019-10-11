@@ -1,5 +1,6 @@
 import React from "react";
 import Cell from "./Cell";
+import { endianness } from "os";
 
 class Grid extends React.Component {
     constructor(props) {
@@ -12,14 +13,18 @@ class Grid extends React.Component {
             width: props.width,
             hold: true,
             drag: [false, null],
-            current: null
+            current: null,
         };
     }
 
     componentDidMount() {
         this.reset(true);
-        this.recursiveBacktracking();
+        // this.recursiveBacktracking();
+        
     }
+
+
+    // univsited: default;
 
     reset(message) {
         const grid = [];
@@ -29,6 +34,7 @@ class Grid extends React.Component {
                 const node = {
                     row: i,
                     col: j,
+                    weight: Math.ceil(Math.random()*50),
                     type: "unvisited"
                 };
                 if (message) this.setDefault(node);
@@ -194,18 +200,40 @@ class Grid extends React.Component {
         }
     }
 
+    // ---- helper methods ----
+
+    getStart() {
+        let grid = this.state.grid;
+        for (let i = 0; i < this.state.width; i++) {
+            for (let j = 0; j < this.state; j++) {
+                if (grid[i][j].type === "start" ) return grid[i][j];
+            }
+        }
+        return null;
+    }
+
+    getStart() {
+        let grid = this.state.grid;
+        for (let i = 0; i < this.state.width; i++) {
+            for (let j = 0; j < this.state; j++) {
+                if (grid[i][j].type === "end" ) return grid[i][j];
+            }
+        }
+        return null;
+    }
+
     getNeighbours(node) {
         let grid = this.state.grid;
         let neighbours = [];
         let i = node.row;
         let j = node.col;
-        if (i > 0 && grid[i - 1][j].type == "unvisited")
+        if (i > 0 )
             neighbours.push(grid[i - 1][j]);
-        if (i < grid.length - 1 && grid[i + 1][j].type == "unvisited")
+        if (i < grid.length - 1 )
             neighbours.push(grid[i + 1][j]);
-        if (j > 0 && grid[i][j - 1].type == "unvisited")
+        if (j > 0)
             neighbours.push(grid[i][j - 1]);
-        if (j < grid[0].length - 1 && grid[i][j + 1].type == "unvisited")
+        if (j < grid[0].length - 1 )
             neighbours.push(grid[i][j + 1]);
         return neighbours;
     }
