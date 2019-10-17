@@ -1,32 +1,33 @@
 import React from "react";
 import Cell from "./Cell";
-import { endianness } from "os";
 
 class Grid extends React.Component {
     constructor(props) {
         super(props);
         this.makeCurrent = this.makeCurrent.bind(this);
         this.reset = this.reset.bind(this);
+        this.sleep = this.sleep.bind(this);
+        this.recursiveBacktracking = this.recursiveBacktracking.bind(this);
+        this.euclidian = this.euclidian.bind(this);
+        this.aStar = this.aStar.bind(this);
+        this.dijkstra = this.dijkstra.bind(this);
         this.state = {
             grid: [],
             height: props.height,
             width: props.width,
             hold: true,
             drag: [false, null],
-            current: null,
+            current: null
         };
     }
 
     componentDidMount() {
         this.reset(true);
-        // this.recursiveBacktracking();
-        
     }
-
 
     // univsited: default;
 
-    reset(message) {
+    reset(withMessage) {
         const grid = [];
         for (let i = 0; i < this.state.height; i++) {
             const row = [];
@@ -34,12 +35,13 @@ class Grid extends React.Component {
                 const node = {
                     row: i,
                     col: j,
-                    weight: Math.ceil(Math.random()*50),
+                    weight: Math.ceil(Math.random() * 50),
                     type: "unvisited"
                 };
-                if (message) this.setDefault(node);
+                if (withMessage) this.setDefault(node);
                 if (i === 0 && j === 0) node.type = "start";
-                if (i === this.state.height - 1 && j === this.state.width - 1) node.type = "end";
+                if (i === this.state.height - 1 && j === this.state.width - 1)
+                    node.type = "end";
                 row.push(node);
             }
             grid.push(row);
@@ -159,25 +161,24 @@ class Grid extends React.Component {
 
     // ---- Justin's method go here ----
 
-    // Make an async function sleep for time in milliseconds.
-    sleep = time => {
-        return new Promise(resolve => setTimeout(resolve, time));
-    };
+    async dijkstra() {}
+
+    async aStar() {}
+
+    async euclidian() {}
 
     async recursiveBacktracking() {
         let stack = [];
-        await this.sleep(10);
         let grid = this.state.grid;
-        let cur = grid[0][0];
+        let cur = this.getStart();
         stack.push(cur);
-        this.setState({ grid: grid });
         let neighbours = this.getNeighbours(cur);
         while (stack.length > 0) {
             if (neighbours.length > 0) {
                 stack.push(cur);
                 let rand = Math.floor(Math.random() * neighbours.length);
                 for (let i = 0; i < neighbours.length; i++) {
-                    if (i != rand && i != rand-1) {
+                    if (i !== rand && i !== rand - 1) {
                         neighbours[i].type = "wall";
                     }
                 }
@@ -189,10 +190,12 @@ class Grid extends React.Component {
                 cur.type = "visitited";
                 this.setState({ grid: grid });
                 neighbours = this.getNeighbours(cur);
-            }
-            else if (stack.length > 0) {
+            } else if (stack.length > 0) {
                 cur = stack.pop();
-                while (stack.length > 0 && this.getNeighbours(cur).length == 0){
+                while (
+                    stack.length > 0 &&
+                    this.getNeighbours(cur).length === 0
+                ) {
                     cur = stack.pop();
                 }
                 neighbours = this.getNeighbours(cur);
@@ -205,21 +208,26 @@ class Grid extends React.Component {
     getStart() {
         let grid = this.state.grid;
         for (let i = 0; i < this.state.width; i++) {
-            for (let j = 0; j < this.state; j++) {
-                if (grid[i][j].type === "start" ) return grid[i][j];
+            for (let j = 0; j < this.state.height; j++) {
+                if (grid[i][j].type === "start") return grid[i][j];
             }
         }
         return null;
     }
 
-    getStart() {
+    getEnd() {
         let grid = this.state.grid;
         for (let i = 0; i < this.state.width; i++) {
-            for (let j = 0; j < this.state; j++) {
-                if (grid[i][j].type === "end" ) return grid[i][j];
+            for (let j = 0; j < this.state.height; j++) {
+                if (grid[i][j].type === "end") return grid[i][j];
             }
         }
         return null;
+    }
+
+    // Make an async function sleep for time in milliseconds.
+    sleep(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
     }
 
     getNeighbours(node) {
@@ -227,13 +235,13 @@ class Grid extends React.Component {
         let neighbours = [];
         let i = node.row;
         let j = node.col;
-        if (i > 0 )
+        if (i > 0 && grid[i - 1][j].type === "unvisited")
             neighbours.push(grid[i - 1][j]);
-        if (i < grid.length - 1 )
+        if (i < grid.length - 1 && grid[i + 1][j].type === "unvisited")
             neighbours.push(grid[i + 1][j]);
-        if (j > 0)
+        if (j > 0 && grid[i][j - 1].type === "unvisited")
             neighbours.push(grid[i][j - 1]);
-        if (j < grid[0].length - 1 )
+        if (j < grid[0].length - 1 && grid[i][j + 1].type === "unvisited")
             neighbours.push(grid[i][j + 1]);
         return neighbours;
     }

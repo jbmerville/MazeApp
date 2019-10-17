@@ -5,10 +5,7 @@ class SideBar extends React.Component {
     constructor(props) {
         super(props);
         this.switchColors = this.switchColors.bind(this);
-        this.reset = this.reset.bind(this);
-        this.state = {
-            reset: props.reset
-        };
+        this.state = {};
     }
 
     switchColors() {
@@ -30,25 +27,36 @@ class SideBar extends React.Component {
                 "--" + property + "1"
             )
         );
-        document.documentElement.style.setProperty(
-            "--" + property + "1",
-            temp
-        );
+        document.documentElement.style.setProperty("--" + property + "1", temp);
     }
-    
 
-    reset() {
-        this.state.reset();
+    componentDidUpdate(prevProps) {
+        if (this.props !== prevProps) {
+            this.setState({
+                reset: this.props.reset,
+                recursiveBacktracking: this.props.recursiveBacktracking,
+                euclidian: this.props.euclidian,
+                aStar: this.props.aStar,
+                dijkstra: this.props.dijkstra
+            });
+        }
     }
 
     render() {
+        const {
+            reset,
+            recursiveBacktracking,
+            dijkstra,
+            aStar,
+            euclidian
+        } = this.state;
         return (
             <div className="side-bar">
                 <div className="section">
                     <div className="section-text">Controls</div>
 
                     <Button
-                        onClick={this.reset}
+                        onClick={reset}
                         text={"Reset"}
                         subtext={"Click to reset the grid to an empty grid."}
                     ></Button>
@@ -61,19 +69,22 @@ class SideBar extends React.Component {
                 <div className="section">
                     <div className="section-text">Path Finders</div>
                     <Button
-                        text={"Algo 1"}
+                        onClick={dijkstra}
+                        text={"Dijkstra's algorithm"}
                         subtext={
                             "Visualize the path from start to finish using Algo 1."
                         }
                     ></Button>
                     <Button
-                        text={"Algo 2"}
+                        onClick={aStar}
+                        text={"A* algorithm"}
                         subtext={
                             "Visualize the path from start to finish using Algo 1."
                         }
                     ></Button>
                     <Button
-                        text={"Algo 3"}
+                        onClick={euclidian}
+                        text={"Euclidian shortest path"}
                         subtext={
                             "Visualize the path from start to finish using Algo 1."
                         }
@@ -82,7 +93,8 @@ class SideBar extends React.Component {
                 <div className="section">
                     <div className="section-text">Maze Generators</div>
                     <Button
-                        text={"Maze 1"}
+                        onClick={recursiveBacktracking}
+                        text={"Recursive Backtracking"}
                         subtext={"Create a maze using Maze 1."}
                     ></Button>
                     <Button
