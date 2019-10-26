@@ -9,9 +9,6 @@ const Button = (props) => {
             case "reset":
                 onClick(false);
                 break;
-            case "aStar":
-                onClick(true);
-                break;
             default:
                 onClick();
                 break;

@@ -12,13 +12,16 @@ class Grid extends React.Component {
         this.aStar = this.aStar.bind(this);
         this.dijkstra = this.dijkstra.bind(this);
         this.iterativeRandom = this.iterativeRandom.bind(this);
+        this.BFS = this.BFS.bind(this);
+
         this.state = {
             grid: [],
             height: props.height,
             width: props.width,
             hold: true,
             drag: [false, null],
-            current: null
+            current: null,
+            solved: false,
         };
     }
 
@@ -36,7 +39,6 @@ class Grid extends React.Component {
                 const node = {
                     row: i,
                     col: j,
-                    weight: Math.ceil(Math.random() * 50),
                     g: 0,
                     h: 0,
                     f: 0,
@@ -140,7 +142,9 @@ class Grid extends React.Component {
 
     // Turn on hover.
     down = event => {
-        this.setState({ hold: false });
+        if (this.state.solved) this.resetNodeOfTypes(["found"]);
+        this.setState({ hold: false, solved: false });
+        
     };
 
     // Turn off hover.
@@ -166,41 +170,20 @@ class Grid extends React.Component {
     }
 
     // ---- Path Finding Algorithms ----
+    
 
-    async dijkstra() {
-        let grid = this.state.grid;
-        let curr = this.getStart();
-        let unvisitedneighbors = this.getUnvisitedNeighbors(curr, true);
-        let queue = [...unvisitedneighbors];
-        let found = false;
-        while (queue.length > 0 && !found) {
-            let newQueue = [];
-            for (let node of queue) {
-                if (node.type === "end") found = true;
-                if (node.type !== "unvisited") {
-                    continue;
-                }
-                node.type = "visited";
-                unvisitedneighbors = this.getUnvisitedNeighbors(node, true);
-                newQueue.push(...unvisitedneighbors);
-            }
-            queue = newQueue;
-            this.setState({ grid: grid });
-            await this.sleep(150);
-        }
-        await this.resetNodeOfTypes(["visited"]);
-        console.log("Done!");    
-        this.aStar(false);    
-    }
+   async dijkstra() { 
 
-    async aStar(isAnimated) {
+   }
+
+    async aStar() {
+        await this.resetNodeOfTypes(["visited", "found"]);
         const { grid } = this.state;
         let openSet = [];
         let closedSet = [];
         let path = [];
         let start = this.getStart();
         let end = this.getEnd();
-        console.log(isAnimated);
 
         openSet.push(start);
 
@@ -222,7 +205,7 @@ class Grid extends React.Component {
             this.removeFromArray(openSet, current);
             closedSet.push(current);
 
-            let neighbors = this.getUnvisitedNeighbors(current, true);
+            let neighbors = this.getUnvisitedNeighbors(current, true, false);
             for (let i = 0; i < neighbors.length; i++) {
                 let neighbor = neighbors[i];
                 // Already seen?
@@ -246,7 +229,7 @@ class Grid extends React.Component {
                     }
                 }
             }
-            if (isAnimated) this.resetNodeOfTypes(["path"]);
+            this.resetNodeOfTypes(["path"]);
             path = [];
             let temp = current;
             path.push(temp);
@@ -258,24 +241,25 @@ class Grid extends React.Component {
                 if (node.type !== "start") node.type ="path";
             }
             this.setState({ grid });
-            if (isAnimated) await this.sleep(10);
+            await this.sleep(10);
         }
-        console.log("aStar");
         this.resetNodeOfTypes(["path"]);
         for (let i = path.length - 1; i >= 0; i--) {
             if (path[i].type !== "start") path[i].type ="found";
             this.setState({ grid });
             await this.sleep(10);
         }
+        this.setState({solved: true});
     }
 
-    async euclidian() {}
+    async euclidian() {
+    }
 
     async recursiveBacktracking() {
         const { grid } = this.state;
         let cur = this.getStart();
         let stack = [cur];
-        let neighbors = this.getUnvisitedNeighbors(cur, false);
+        let neighbors = this.getUnvisitedNeighbors(cur, false, false);
         while (stack.length > 0) {
             if (neighbors.length > 0) {
                 stack.push(cur);
@@ -292,7 +276,7 @@ class Grid extends React.Component {
                 await this.sleep(5);
                 cur.type = "visited";
                 this.setState({ grid: grid });
-                neighbors = this.getUnvisitedNeighbors(cur, false);
+                neighbors = this.getUnvisitedNeighbors(cur, false, false);
             } else if (stack.length > 0) {
                 cur = stack.pop();
                 while (
@@ -301,7 +285,7 @@ class Grid extends React.Component {
                 ) {
                     cur = stack.pop();
                 }
-                neighbors = this.getUnvisitedNeighbors(cur, false);
+                neighbors = this.getUnvisitedNeighbors(cur, false, false);
             }
         }
         this.resetNodeOfTypes(["visited"]);
@@ -322,8 +306,48 @@ class Grid extends React.Component {
         this.resetNodeOfTypes(["visited"]);
     }
 
-    async showPath() {
-
+    // Once the End node is found this function computes the shortest path using Breath First Search.
+    async BFS() {
+        await this.resetNodeOfTypes(["visited", "found"]);
+        let grid = this.state.grid;
+        let end = this.getEnd();
+        let start = this.getStart();
+        let neighbors = this.getUnvisitedNeighbors(start, true, false);
+        let queue = [];
+        for (let neighbor of neighbors){
+                neighbor.type = "visited";
+                queue.push({node: neighbor, parent: {node: start, parent: null }});
+        }
+        this.setState({ grid });
+        await this.sleep(10);
+        while (queue.length > 0) {
+            let newQueue = [];
+            for (let curr of queue) {
+                if (curr.node === end){
+                    curr.node.type = "end";
+                    curr = curr.parent;
+                    await this.resetNodeOfTypes(["visited"]);
+                    while (curr.parent !== null){
+                        curr.node.type = "found";
+                        this.setState({ grid });
+                        await this.sleep(10);
+                        curr = curr.parent;
+                    }
+                    this.setState({solved: true});
+                    return;
+                }
+     
+                curr.node.type = "visited";
+                neighbors = this.getUnvisitedNeighbors(curr.node, true, false);
+                for (let neighbor of neighbors){
+                    neighbor.type = "visited";
+                    newQueue.push({node: neighbor, parent: curr});
+                }
+            }
+            queue = newQueue;
+            this.setState({ grid });
+            await this.sleep(150);
+        }        
     }
 
     // ---- helper methods ----
@@ -336,6 +360,7 @@ class Grid extends React.Component {
         return this.getNode("end");
     }
 
+    // Rerturn the first node with type passed as an argument.
     getNode(type) {
         const { height, width, grid } = this.state;
         for (let i = 0; i < height; i++) {
@@ -346,7 +371,7 @@ class Grid extends React.Component {
         return null;
     }
 
-
+    // Makes the nodes of types, given in a array of types, have type "unvisited"
     async resetNodeOfTypes(types) {
         const { height, width, grid } = this.state;
         for (let i = 0; i < height; i++) {
@@ -356,7 +381,6 @@ class Grid extends React.Component {
             }
         }
         this.setState({ grid });
-        console.log("reset");
     }
 
     // Make an async function sleep for time in milliseconds.
@@ -364,36 +388,26 @@ class Grid extends React.Component {
         return new Promise(resolve => setTimeout(resolve, time));
     }
 
-    // Returns a list of all neighbor nodes that are either univisited or the end node.
-    getUnvisitedNeighbors(node, includeEnd) {
+    // Returns a list of all neighbor nodes that are either univisited, the end node or the start node.
+    getUnvisitedNeighbors(node, includeEnd, includeStart) {
         let grid = this.state.grid;
         let neighbors = [];
         let i = node.row;
         let j = node.col;
-        if (
-            i > 0 &&
-            (grid[i - 1][j].type === "unvisited" ||
-                (grid[i - 1][j].type === "end" && includeEnd))
-        )
+        let types = ["unvisited", "start", "end"];
+        if (i > 0 && types.includes(grid[i - 1][j].type))
             neighbors.push(grid[i - 1][j]);
-        if (
-            i < grid.length - 1 &&
-            (grid[i + 1][j].type === "unvisited" ||
-                (grid[i + 1][j].type === "end" && includeEnd))
-        )
+        if (i < grid.length - 1 &&  types.includes(grid[i + 1][j].type))
             neighbors.push(grid[i + 1][j]);
-        if (
-            j > 0 &&
-            (grid[i][j - 1].type === "unvisited" ||
-                (grid[i][j - 1].type === "end" && includeEnd))
-        )
+        if (j > 0 &&  types.includes(grid[i][j - 1].type))
             neighbors.push(grid[i][j - 1]);
-        if (
-            j < grid[0].length - 1 &&
-            (grid[i][j + 1].type === "unvisited" ||
-                (grid[i][j + 1].type === "end" && includeEnd))
-        )
+        if (j < grid[0].length - 1 &&  types.includes(grid[i][j + 1].type))
             neighbors.push(grid[i][j + 1]);
+        for (let neighbor of neighbors){
+            if (!includeEnd && neighbor.type === "end") this.removeFromArray(neighbors, neighbor);
+            if (!includeStart && neighbor.type === "start") this.removeFromArray(neighbors, neighbor);
+        }
+        
         return neighbors;
     }
 

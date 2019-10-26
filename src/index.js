@@ -16,31 +16,30 @@ class App extends React.Component {
         this.state = {
             width: Math.floor(width / size) - 1,
             height: Math.floor(height / size) - 1,
-            reset: null,
-            padding: (height - size * (Math.floor(height / size)- 1)) / 2,
+            margin: (height - size * (Math.floor(height / size)- 1)) / 2,
         };
     }
 
     componentDidMount() {
-        console.log(this.state.padding);
+        const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS } = this.ref.current;
         this.setState({
-            reset: this.ref.current.reset,
-            recursiveBacktracking: this.ref.current.recursiveBacktracking,
-            euclidian: this.ref.current.euclidian,
-            aStar: this.ref.current.aStar,
-            dijkstra: this.ref.current.dijkstra,
-            iterativeRandom: this.ref.current.iterativeRandom,
-
+            reset: reset,
+            recursiveBacktracking: recursiveBacktracking,
+            euclidian: euclidian,
+            aStar: aStar,
+            dijkstra: dijkstra,
+            iterativeRandom: iterativeRandom,
+            BFS: BFS,
         });
     }
 
     render() {
-        const { padding, height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom } = this.state;
+        const { margin, height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, } = this.state;
         return (
-            <div style={{padding: padding}} className="container">
+            <div style={ {margin }} className="container">
                 <Tutorial></Tutorial>
                 <Grid  height={height} width={width} ref={this.ref}></Grid>
-                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} iterativeRandom={iterativeRandom}></SideBar>
+                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} iterativeRandom={iterativeRandom} BFS={BFS} ></SideBar>
             </div>
         );
     }

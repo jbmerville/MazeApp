@@ -33,6 +33,7 @@ class SideBar extends React.Component {
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
             this.setState({
+                BFS: this.props.BFS,
                 reset: this.props.reset,
                 recursiveBacktracking: this.props.recursiveBacktracking,
                 euclidian: this.props.euclidian,
@@ -51,6 +52,7 @@ class SideBar extends React.Component {
             aStar,
             euclidian,
             iterativeRandom,
+            BFS,
         } = this.state;
         return (
             <div className="side-bar">
@@ -71,25 +73,21 @@ class SideBar extends React.Component {
                 <div className="section">
                     <div className="section-text">Path Finders</div>
                     <Button
+                        onClick={BFS}
+                        text={"Breath First Search"}
+                    ></Button>
+                    <Button
                         onClick={dijkstra}
                         text={"Dijkstra's algorithm"}
-                        subtext={
-                            "Visualize the path from start to finish using Algo 1."
-                        }
                     ></Button>
                     <Button
                         onClick={aStar}
                         text={"A* algorithm"}
-                        subtext={
-                            "Visualize the path from start to finish using Algo 1."
-                        }
                     ></Button>
                     <Button
                         onClick={euclidian}
                         text={"Euclidian shortest path"}
-                        subtext={
-                            "Visualize the path from start to finish using Algo 1."
-                        }
+                        
                     ></Button>
                 </div>
                 <div className="section">
@@ -97,16 +95,10 @@ class SideBar extends React.Component {
                     <Button
                         onClick={recursiveBacktracking}
                         text={"Recursive Random"}
-                        subtext={"Create a maze using Maze 1."}
                     ></Button>
                     <Button
                         onClick={iterativeRandom}
                         text={"Iterative Random"}
-                        subtext={"Create a maze using Maze 2."}
-                    ></Button>
-                    <Button
-                        text={"Maze 3"}
-                        subtext={"Create a maze using Maze 3."}
                     ></Button>
                 </div>
             </div>
