@@ -23,7 +23,7 @@ class Cell extends React.Component {
             this.setState({ hold: this.props.hold, drag: this.props.drag });
         }
         if (prevProps.node !== this.props.node) {
-            this.setState({ node: this.props.node});
+            this.setState({ node: this.props.node });
         }
     }
 

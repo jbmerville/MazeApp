@@ -37,7 +37,8 @@ class SideBar extends React.Component {
                 recursiveBacktracking: this.props.recursiveBacktracking,
                 euclidian: this.props.euclidian,
                 aStar: this.props.aStar,
-                dijkstra: this.props.dijkstra
+                dijkstra: this.props.dijkstra,
+                iterativeRandom: this.props.iterativeRandom,
             });
         }
     }
@@ -48,7 +49,8 @@ class SideBar extends React.Component {
             recursiveBacktracking,
             dijkstra,
             aStar,
-            euclidian
+            euclidian,
+            iterativeRandom,
         } = this.state;
         return (
             <div className="side-bar">
@@ -94,11 +96,12 @@ class SideBar extends React.Component {
                     <div className="section-text">Maze Generators</div>
                     <Button
                         onClick={recursiveBacktracking}
-                        text={"Recursive Backtracking"}
+                        text={"Recursive Random"}
                         subtext={"Create a maze using Maze 1."}
                     ></Button>
                     <Button
-                        text={"Maze 2"}
+                        onClick={iterativeRandom}
+                        text={"Iterative Random"}
                         subtext={"Create a maze using Maze 2."}
                     ></Button>
                     <Button

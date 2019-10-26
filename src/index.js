@@ -6,37 +6,41 @@ import Tutorial from "./Tutorial";
 
 let size = 30;
 
+
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.ref = React.createRef();
-        let width = window.innerWidth - 460;
-        let height = window.innerHeight - 20;
+        let width = window.innerWidth - 450;
+        let height = window.innerHeight ;
         this.state = {
-            width: Math.floor(width / size),
-            height: Math.floor(height / size),
+            width: Math.floor(width / size) - 1,
+            height: Math.floor(height / size) - 1,
             reset: null,
-            recursiveBacktracking: null
+            padding: (height - size * (Math.floor(height / size)- 1)) / 2,
         };
     }
 
     componentDidMount() {
+        console.log(this.state.padding);
         this.setState({
             reset: this.ref.current.reset,
             recursiveBacktracking: this.ref.current.recursiveBacktracking,
             euclidian: this.ref.current.euclidian,
             aStar: this.ref.current.aStar,
-            dijkstra: this.ref.current.dijkstra
+            dijkstra: this.ref.current.dijkstra,
+            iterativeRandom: this.ref.current.iterativeRandom,
+
         });
     }
 
     render() {
-        const { height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra } = this.state;
+        const { padding, height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom } = this.state;
         return (
-            <div className="container">
+            <div style={{padding: padding}} className="container">
                 <Tutorial></Tutorial>
-                <Grid height={height} width={width} ref={this.ref}></Grid>
-                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} ></SideBar>
+                <Grid  height={height} width={width} ref={this.ref}></Grid>
+                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} iterativeRandom={iterativeRandom}></SideBar>
             </div>
         );
     }
