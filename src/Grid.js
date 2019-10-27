@@ -21,6 +21,7 @@ class Grid extends React.Component {
             hold: true,
             drag: [false, null],
             current: null,
+            prev: null,
             solved: false,
         };
     }
@@ -142,19 +143,20 @@ class Grid extends React.Component {
 
     // Turn on hover.
     down = event => {
-        if (this.state.solved) this.resetNodeOfTypes(["found"]);
+        const { solved } = this.state;
+        if (solved) this.resetNodeOfTypes(["found"]);
         this.setState({ hold: false, solved: false });
         
     };
 
     // Turn off hover.
     up = event => {
+        
         const { current, grid, drag } = this.state;
         this.setState({ hold: true });
         if (drag[0]) {
             grid[current.row][current.col].type = drag[1];
             this.setState({ drag: [false, null], grid: grid });
-            this.resetNodeOfTypes(["visited", "found"]);
         }
     };
 
@@ -166,7 +168,8 @@ class Grid extends React.Component {
 
     // Update which node the user is currently hovering.
     makeCurrent(node) {
-        this.setState({ current: node });
+        const { current } = this.state;
+        this.setState({ current: node, prev: current});
     }
 
     // ---- Path Finding Algorithms ----
@@ -256,6 +259,7 @@ class Grid extends React.Component {
     }
 
     async recursiveBacktracking() {
+        await this.resetNodeOfTypes(["visited", "found"]);
         const { grid } = this.state;
         let cur = this.getStart();
         let stack = [cur];
@@ -292,6 +296,7 @@ class Grid extends React.Component {
     }
 
     async iterativeRandom() {
+        await this.resetNodeOfTypes(["visited", "found"]);
         const { height, width, grid } = this.state;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
@@ -427,7 +432,7 @@ class Grid extends React.Component {
     }
 
     render() {
-        const { grid } = this.state;
+        const { grid, drag, hold } = this.state;
         return (
             <table>
                 <tbody
@@ -442,10 +447,11 @@ class Grid extends React.Component {
                                     return (
                                         <Cell
                                             current={this.makeCurrent}
-                                            drag={this.state.drag[0]}
+                                            drag={drag[0]}
+                                            dragType={drag[1]}
                                             lockAll={this.lockAll}
                                             node={node}
-                                            hold={this.state.hold}
+                                            hold={hold}
                                             key={node.row + "-" + node.col}
                                         ></Cell>
                                     );

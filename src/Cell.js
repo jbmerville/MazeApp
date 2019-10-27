@@ -12,15 +12,16 @@ class Cell extends React.Component {
             node: props.node,
             hold: props.hold,
             locked: true,
-            drag: props.drag,
+            drag: props.dxrag,
+            dragType: props.dragType,
             lockAll: props.lockAll,
-            current: props.current
+            current: props.current,
         };
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.hold !== this.props.hold) {
-            this.setState({ hold: this.props.hold, drag: this.props.drag });
+            this.setState({ hold: this.props.hold, drag: this.props.drag, dragType: this.props.dragType });
         }
         if (prevProps.node !== this.props.node) {
             this.setState({ node: this.props.node });
@@ -29,25 +30,25 @@ class Cell extends React.Component {
 
     // Changes the nodes 
     toWall() {
-        if (!this.state.hold && !this.state.drag && this.state.locked) {
-            if (this.state.node.type === "unvisited") {
-                let node = this.state.node;
-                node.type = "wall";
-                this.setState({ node: node });
-            } else if (this.state.node.type === "wall") {
-                let node = this.state.node;
-                node.type = "unvisited";
-                this.setState({ node: node });
+        const { hold, locked, dragType, node } = this.state;
+        if (!hold  && locked) {
+            if (node.type === "unvisited") {
+                node.type = dragType === null ? "wall" : dragType;
+                this.setState({ node });
+            } else if (node.type === "wall") {
+                node.type = dragType === null ? "unvisited" : dragType;
+                this.setState({ node });
             }
         } 
-        this.lock(true);
     }
 
 
     lock(bool) {
-        if (!this.state.hold) {
+        const { hold, dragType, node } = this.state;
+        if (!hold) {
+            if (dragType !== null) node.type = "unvisited";
             this.setState({ locked: bool });
-        }
+        } 
     }
 
     // Turn on and off walls on click.
@@ -65,9 +66,9 @@ class Cell extends React.Component {
 
     // Drag the start and end nodes.
     drag() {
-        let node = this.state.node;
-        this.state.lockAll(this.state.node.type);
-        node.type = "unvisited";
+        const { node, lockAll } = this.state;
+        lockAll(node.type);
+        this.setState({ node });
     }
 
     // Update which node the user is currently hovering.
