@@ -21,7 +21,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS } = this.ref.current;
+        const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision } = this.ref.current;
         this.setState({
             reset: reset,
             recursiveBacktracking: recursiveBacktracking,
@@ -30,16 +30,17 @@ class App extends React.Component {
             dijkstra: dijkstra,
             iterativeRandom: iterativeRandom,
             BFS: BFS,
+            recursiveDivision: recursiveDivision,
         });
     }
 
     render() {
-        const { margin, height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, } = this.state;
+        const { margin, height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision } = this.state;
         return (
             <div style={ {margin }} className="container">
                 <Tutorial></Tutorial>
                 <Grid  height={height} width={width} ref={this.ref}></Grid>
-                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} iterativeRandom={iterativeRandom} BFS={BFS} ></SideBar>
+                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} iterativeRandom={iterativeRandom} BFS={BFS} recursiveDivision={recursiveDivision}></SideBar>
             </div>
         );
     }

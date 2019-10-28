@@ -32,14 +32,16 @@ class SideBar extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
+            const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision } = this.props;
             this.setState({
-                BFS: this.props.BFS,
-                reset: this.props.reset,
-                recursiveBacktracking: this.props.recursiveBacktracking,
-                euclidian: this.props.euclidian,
-                aStar: this.props.aStar,
-                dijkstra: this.props.dijkstra,
-                iterativeRandom: this.props.iterativeRandom,
+                BFS,
+                reset,
+                recursiveBacktracking,
+                euclidian,
+                aStar,
+                dijkstra,
+                iterativeRandom,
+                recursiveDivision,
             });
         }
     }
@@ -53,6 +55,7 @@ class SideBar extends React.Component {
             euclidian,
             iterativeRandom,
             BFS,
+            recursiveDivision,
         } = this.state;
         return (
             <div className="side-bar">
@@ -92,6 +95,10 @@ class SideBar extends React.Component {
                 </div>
                 <div className="section">
                     <div className="section-text">Maze Generators</div>
+                    <Button
+                        onClick={recursiveDivision}
+                        text={"Recursive Division"}
+                    ></Button>
                     <Button
                         onClick={recursiveBacktracking}
                         text={"Recursive Random"}

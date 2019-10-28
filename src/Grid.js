@@ -13,7 +13,8 @@ class Grid extends React.Component {
         this.dijkstra = this.dijkstra.bind(this);
         this.iterativeRandom = this.iterativeRandom.bind(this);
         this.BFS = this.BFS.bind(this);
-
+        this.recursiveDivision = this.recursiveDivision.bind(this);
+        this.clearAroundNode = this.clearAroundNode.bind(this);
         this.state = {
             grid: [],
             height: props.height,
@@ -43,6 +44,7 @@ class Grid extends React.Component {
                     g: 0,
                     h: 0,
                     f: 0,
+                    d: 0,
                     type: "unvisited"
                 };
                 if (withMessage) this.setDefault(node);
@@ -146,12 +148,10 @@ class Grid extends React.Component {
         const { solved } = this.state;
         if (solved) this.resetNodeOfTypes(["found"]);
         this.setState({ hold: false, solved: false });
-        
     };
 
     // Turn off hover.
     up = event => {
-        
         const { current, grid, drag } = this.state;
         this.setState({ hold: true });
         if (drag[0]) {
@@ -175,9 +175,47 @@ class Grid extends React.Component {
     // ---- Path Finding Algorithms ----
     
 
-   async dijkstra() { 
-
-   }
+    async dijkstra() { 
+        await this.resetNodeOfTypes(["visited", "found"]);
+        let start = this.getStart();
+        let end = this.getEnd();
+        const { grid } = this.state;
+        let queue = [{ node: start, parent: null }];
+        while(queue.length > 0){
+            let curr = queue.shift();
+            if (curr.node === end) {
+                curr.node.type = "end";
+                    curr = curr.parent;
+                    await this.resetNodeOfTypes(["visited"]);
+                    while (curr.parent !== null){
+                        curr.node.type = "found";
+                        this.setState({ grid });
+                        await this.sleep(10);
+                        curr = curr.parent;
+                    }
+                    this.setState({solved: true});
+                    return;
+            }
+            let neighbors = this.getUnvisitedNeighbors(curr.node, true, false);
+            for (let neighbor of neighbors){
+                if (neighbor.type !== "visited") {
+                    if (neighbor.d < curr.node.d + 1) {
+                        neighbor.d = curr.node.d + 1;
+                        let obj = {node: neighbor, parent: curr};
+                        if (queue.includes(obj)) {
+                            this.removeFromArray(queue, neighbor);
+                            queue = [obj, ...queue];
+                        } else {
+                            queue.push(obj);
+                        }
+                    } 
+                }
+            }
+            if (curr.node.type !== "start") curr.node.type = "visited";
+            this.setState({ grid });
+            await this.sleep(10);
+        }
+    }
 
     async aStar() {
         await this.resetNodeOfTypes(["visited", "found"]);
@@ -292,7 +330,9 @@ class Grid extends React.Component {
                 neighbors = this.getUnvisitedNeighbors(cur, false, false);
             }
         }
-        this.resetNodeOfTypes(["visited"]);
+        await this.resetNodeOfTypes(["visited"]);
+        await this.clearAroundNode(this.getStart());
+        await this.clearAroundNode(this.getEnd());
     }
 
     async iterativeRandom() {
@@ -308,7 +348,78 @@ class Grid extends React.Component {
                 this.setState({ grid: grid });
             }
         }
-        this.resetNodeOfTypes(["visited"]);
+        await this.resetNodeOfTypes(["visited"]);
+        await this.clearAroundNode(this.getStart());
+        await this.clearAroundNode(this.getEnd());
+    }
+
+    async recursiveDivision() {
+        await this.resetNodeOfTypes(["visited", "found", "wall"]);
+        const { grid } = this.state;
+        const types = ["start", "end"]
+     
+
+        const addEntrance = async () => {
+            const { grid } = this.state;
+            let x = randomNumber(1, grid[0].length - 1);
+            if (!types.includes(grid[grid.length - 1][x])) grid[grid.length - 1][x].type = "unvisited";
+            return x;
+        }
+
+        const addInnerWalls = async (h, minX, maxX, minY, maxY, gate) => {
+            if (h) {
+                if (maxX - minX < 2) {
+                    return;
+                }
+
+                let y = Math.floor(randomNumber(minY, maxY)/2)*2;
+                await addHWall(minX, maxX, y);
+
+                await addInnerWalls(!h, minX, maxX, minY, y-1, gate);
+                await addInnerWalls(!h, minX, maxX, y + 1, maxY, gate);
+            } else {
+                if (maxY - minY < 2) {
+                    return;
+                }
+
+                let x = Math.floor(randomNumber(minX, maxX)/2)*2;
+                await addVWall(minY, maxY, x);
+
+                await addInnerWalls(!h, minX, x-1, minY, maxY, gate);
+                await addInnerWalls(!h, x + 1, maxX, minY, maxY, gate);
+            }
+        }
+
+        const addHWall = async (minX, maxX, y) => {
+            let hole = Math.floor(randomNumber(minX, maxX)/2)*2+1;
+            const { grid } = this.state;
+            for (let i = minX; i < maxX; i++) {
+                if (i === hole && types.includes(grid[y][i].type)) grid[y][i].type = "unvisited";
+                else if (!types.includes(grid[y][i].type)) grid[y][i].type = "wall";
+                this.setState({ grid });
+                await this.sleep(5);
+            }
+        }
+
+         const addVWall = async (minY, maxY, x) => {
+            let hole = Math.floor(randomNumber(minY, maxY)/2)*2+1;
+            const { grid } = this.state;
+            for (let i = minY; i <= maxY; i++) {
+                if (i === hole && !types.includes(grid[i][x].type)) grid[i][x].type = "unvisited";
+                else if (!types.includes(grid[i][x].type)) grid[i][x].type = "wall";
+                this.setState({ grid });
+                await this.sleep(5);
+            }
+        }
+
+        const randomNumber = (min, max) => {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+        
+        let ent = await addEntrance();
+        await addInnerWalls(false, 0, grid[0].length, 0, grid.length - 1, ent);
+        await this.clearAroundNode(this.getStart());
+        await this.clearAroundNode(this.getEnd());
     }
 
     // Once the End node is found this function computes the shortest path using Breath First Search.
@@ -414,6 +525,17 @@ class Grid extends React.Component {
         }
         
         return neighbors;
+    }
+
+    async clearAroundNode(node) {
+        const { grid } = this.state;
+        let i  = node.row;
+        let j =  node.col;
+        if (i > 0) grid[i - 1][j].type = "unvisited";
+        if (j > 0) grid[i][j - 1].type = "unvisited";
+        if (i < grid.length - 1) grid[i + 1][j].type = "unvisited";
+        if (j < grid[0].length - 1) grid[i][j + 1].type = "unvisited";
+        this.setState({ grid });
     }
 
     removeFromArray(arr, elt) {
