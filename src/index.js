@@ -4,7 +4,7 @@ import Grid from "./Grid";
 import SideBar from "./SideBar";
 import Tutorial from "./Tutorial";
 
-let size = 30;
+let size = 25;
 
 
 class App extends React.Component {
@@ -21,7 +21,7 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision } = this.ref.current;
+        const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision, recursiveDivision2 } = this.ref.current;
         this.setState({
             reset: reset,
             recursiveBacktracking: recursiveBacktracking,
@@ -31,16 +31,17 @@ class App extends React.Component {
             iterativeRandom: iterativeRandom,
             BFS: BFS,
             recursiveDivision: recursiveDivision,
+            recursiveDivision2: recursiveDivision2,
         });
     }
 
     render() {
-        const { margin, height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision } = this.state;
+        const { margin, height, width, reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision, recursiveDivision2 } = this.state;
         return (
             <div style={ {margin }} className="container">
                 <Tutorial></Tutorial>
                 <Grid  height={height} width={width} ref={this.ref}></Grid>
-                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} iterativeRandom={iterativeRandom} BFS={BFS} recursiveDivision={recursiveDivision}></SideBar>
+                <SideBar reset={reset} recursiveBacktracking={recursiveBacktracking} dijkstra={dijkstra} euclidian={euclidian} aStar={aStar} iterativeRandom={iterativeRandom} BFS={BFS} recursiveDivision={recursiveDivision} recursiveDivision2={recursiveDivision2}></SideBar>
             </div>
         );
     }

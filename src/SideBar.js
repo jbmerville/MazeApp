@@ -32,7 +32,7 @@ class SideBar extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
-            const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision } = this.props;
+            const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision, recursiveDivision2 } = this.props;
             this.setState({
                 BFS,
                 reset,
@@ -42,6 +42,7 @@ class SideBar extends React.Component {
                 dijkstra,
                 iterativeRandom,
                 recursiveDivision,
+                recursiveDivision2,
             });
         }
     }
@@ -56,6 +57,7 @@ class SideBar extends React.Component {
             iterativeRandom,
             BFS,
             recursiveDivision,
+            recursiveDivision2,
         } = this.state;
         return (
             <div className="side-bar">
@@ -98,6 +100,10 @@ class SideBar extends React.Component {
                     <Button
                         onClick={recursiveDivision}
                         text={"Recursive Division"}
+                    ></Button>
+                    <Button
+                        onClick={recursiveDivision}
+                        text={"Recursive Division 2"}
                     ></Button>
                     <Button
                         onClick={recursiveBacktracking}

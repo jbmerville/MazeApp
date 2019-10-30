@@ -28,7 +28,7 @@ body {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    box-shadow: -7px 7px 0 0px #00000030;
+    box-shadow: -8px 8px 0 0px #00000030;
     display: block;
     position:absolute;
     height:auto;
@@ -44,8 +44,8 @@ body {
 }
 
 .cell-drag {
-    height: 30px;
-    width: 30px;
+    height: 25px;
+    width: 25px;
     background: blueviolet;
 }
 
@@ -56,6 +56,7 @@ body {
     margin-bottom: 35px !important;
     position: relative;
     margin: 10px;
+    font-size: 1em;
     line-height: 1.4em;
     color: var(--main);
 }
@@ -65,7 +66,7 @@ body {
     border-bottom: 1px solid var(--hover);
     margin-bottom: 10px;
     color: #000a82;
-    font-size: 23px;
+    font-size: 1em;
 }
 
 .row {
@@ -79,8 +80,8 @@ body {
     background: var(--accent);
     cursor: pointer;
     border: 1px solid var(--border);
-    width: 30px;
-    height: 30px;
+    height: 25px;
+    width: 25px;
     display: table-cell;
     vertical-align: inherit;
     box-sizing: border-box;
@@ -163,7 +164,7 @@ body {
     text-align: left;
     position: relative;
     font-family: Open Sans;
-    font-size: 15px;
+    font-size: 0.8em;
     user-select: none;
 }
 
