@@ -67,12 +67,10 @@ class SideBar extends React.Component {
                     <Button
                         onClick={reset}
                         text={"Reset"}
-                        subtext={"Click to reset the grid to an empty grid."}
                     ></Button>
                     <Button
                         onClick={this.switchColors}
                         text={"Dark/Light Mode"}
-                        subtext={"Click to reset the grid to an empty grid."}
                     ></Button>
                 </div>
                 <div className="section">
@@ -102,7 +100,7 @@ class SideBar extends React.Component {
                         text={"Recursive Division"}
                     ></Button>
                     <Button
-                        onClick={recursiveDivision}
+                        onClick={recursiveDivision2}
                         text={"Recursive Division 2"}
                     ></Button>
                     <Button

@@ -14,6 +14,8 @@ class Grid extends React.Component {
         this.iterativeRandom = this.iterativeRandom.bind(this);
         this.BFS = this.BFS.bind(this);
         this.recursiveDivision = this.recursiveDivision.bind(this);
+        this.recursiveDivision2 = this.recursiveDivision2.bind(this);
+
         this.clearAroundNode = this.clearAroundNode.bind(this);
         this.randomNumber = this.randomNumber.bind(this);
         this.state = {
@@ -427,62 +429,68 @@ class Grid extends React.Component {
         const buildWall = async (i, j, vert, hori) => {
             
             // if no more space to build walls stop.
-            if (vert - i < 2 || hori - j < 2){
+            if (vert - i < 3 || hori - j < 3){
                 return;
             }
 
             let horiWall = i;
             let vertWall = j;
-            let vertAndHor = [false, false]
+            let vertAndHor = [true, true]
 
             // Make horizontal wall.
-            if (vert - i > 3 ) {
-                vertAndHor[0] = true;
+            horiWall = this.randomNumber(i + 1 , vert - 2 );
+            let leftHole = null;
+            let rightHole = null;
+                
+                // check for the holes in the left and right walls
+            for (let z = i; z < vert; z++ ){
+                if (j > 0 && grid[z][j-1].type === "unvisited") leftHole = z;
+                if (hori < grid[0].length && grid[z][hori].type === "unvisited") rightHole = z;
+            }
+            let count = 0
+            while ((leftHole !== null && horiWall === leftHole) || (rightHole !== null && horiWall === rightHole)){
                 horiWall = this.randomNumber(i + 1 , vert - 2 );
-                let leftHole = null;
-                let rightHole = null;
-                 
-                 // check for the holes in the left and right walls.
-
-                for (let z = i; z < vert; z++ ){
-                    if (j > 0 && grid[z][j-1].type === "unvisited") leftHole = z;
-                    if (hori < grid[0].length && grid[z][hori].type === "unvisited") rightHole = z;
+                if (count === 3) {
+                    horiWall = null;
+                    vertAndHor[0] = false;
+                    break;
                 }
-                let count = 0
-                while ((leftHole !== null && horiWall === leftHole) || (rightHole !== null && horiWall === rightHole)){
-                    horiWall = this.randomNumber(i + 1 , vert - 2 );
-                    if (count === 3) break;
-                    count += 1;
-                }
+                count += 1;
+            }
+            if (horiWall !== null){
                 for (let z = j; z < hori; z++ ){
-                    if (grid[horiWall][z].type === "unvisited") grid[horiWall][z].type = "wall";
-                    this.setState({ grid });
-                    await this.sleep(1);
+                if (grid[horiWall][z].type === "unvisited") grid[horiWall][z].type = "wall";
+                this.setState({ grid });
+                await this.sleep(1);
                 } 
-            } 
-            if (hori - j > 3){
-                vertAndHor[1] = true;
-                vertWall = this.randomNumber(j + 1, hori - 2 );
-                let topHole = null;
-                let botHole = null;
+            }
+                
+            vertWall = this.randomNumber(j + 1, hori - 2 );
+            let topHole = null;
+            let botHole = null;
 
-                for (let z = j; z < hori; z++){
-                    if (i > 0 && grid[i-1][z].type === "unvisited") topHole = z;
-                    if (vert < grid.length && grid[vert][z].type === "unvisited") botHole = z;
-                }
+            for (let z = j; z < hori; z++){
+                if (i > 0 && grid[i-1][z].type === "unvisited") topHole = z;
+                if (vert < grid.length && grid[vert][z].type === "unvisited") botHole = z;
+            }
 
-                let count = 0;
-                while ((topHole !== null && vertWall === topHole) || (botHole !== null && vertWall === botHole)){
-                    vertWall = this.randomNumber(j + 1, hori - 2);
-                    if (count === 3) break;
-                    count += 1;
+            count = 0;
+            while ((topHole !== null && vertWall === topHole) || (botHole !== null && vertWall === botHole)){
+                vertWall = this.randomNumber(j + 1, hori - 2);
+                if (count === 3) {
+                    vertWall = null;
+                    vertAndHor[1] = false;
+                    break;
                 }
+                count += 1;
+            }
+            if (vertWall !== null){
                 for (let z = i; z < vert; z++ ){
                     if (grid[z][vertWall].type === "unvisited") grid[z][vertWall].type = "wall";
                     this.setState({ grid });
                     await this.sleep(1);
                 }
-            } 
+            }
 
             let newHoles = [null, null, null, null];
             // set the holes.
@@ -505,10 +513,10 @@ class Grid extends React.Component {
             this.setState({ grid });
 
             // leftHole, rightHole, topHole, botHole
-            await buildWall(i, j, horiWall, vertWall);
-            await buildWall(horiWall + 1, vertWall + 1, vert, hori);
-            await buildWall(horiWall + 1, j, vert, vertWall);
-            await buildWall(i, vertWall + 1, horiWall, hori);
+            if (horiWall !== null && vertWall !== null) await buildWall(i, j, horiWall, vertWall);
+            if (vertWall !== null) await buildWall(horiWall + 1, vertWall + 1, vert, hori);
+            if (horiWall !== null && vertWall !== null) await buildWall(horiWall + 1, j, vert, vertWall);
+            if (horiWall !== null && vertWall !== null) await buildWall(i, vertWall + 1, horiWall, hori);
         }
         await buildWall(0, 0, grid.length, grid[0].length, null, null, null, null);
     }
