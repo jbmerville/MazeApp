@@ -424,25 +424,35 @@ class Grid extends React.Component {
 
     async recursiveDivision() {
         const { grid  } = this.state;
-        const buildWall = async (i, j, vert, hori, holes) => {
+        const buildWall = async (i, j, vert, hori) => {
             
             // if no more space to build walls stop.
-            if (vert - i <= 2 || hori - j <= 2){
+            if (vert - i < 2 || hori - j < 2){
                 return;
             }
 
             let horiWall = i;
             let vertWall = j;
-            //              left  right  top  bot
-            let newHoles = [null, null, null, null];
             let vertAndHor = [false, false]
 
             // Make horizontal wall.
-            if (vert - i > 4 ) {
+            if (vert - i > 3 ) {
                 vertAndHor[0] = true;
                 horiWall = this.randomNumber(i + 1 , vert - 2 );
-                while ((holes[0] !== null && horiWall === holes[0][0]) || (holes[1] !== null && horiWall === holes[1][0])){
+                let leftHole = null;
+                let rightHole = null;
+                 
+                 // check for the holes in the left and right walls.
+
+                for (let z = i; z < vert; z++ ){
+                    if (j > 0 && grid[z][j-1].type === "unvisited") leftHole = z;
+                    if (hori < grid[0].length && grid[z][hori].type === "unvisited") rightHole = z;
+                }
+                let count = 0
+                while ((leftHole !== null && horiWall === leftHole) || (rightHole !== null && horiWall === rightHole)){
                     horiWall = this.randomNumber(i + 1 , vert - 2 );
+                    if (count === 3) break;
+                    count += 1;
                 }
                 for (let z = j; z < hori; z++ ){
                     if (grid[horiWall][z].type === "unvisited") grid[horiWall][z].type = "wall";
@@ -450,11 +460,22 @@ class Grid extends React.Component {
                     await this.sleep(1);
                 } 
             } 
-            if (hori - j > 4){
+            if (hori - j > 3){
                 vertAndHor[1] = true;
                 vertWall = this.randomNumber(j + 1, hori - 2 );
-                while ((holes[2] !== null && vertWall === holes[2][1]) || (holes[3] !== null && vertWall === holes[3][1])){
+                let topHole = null;
+                let botHole = null;
+
+                for (let z = j; z < hori; z++){
+                    if (i > 0 && grid[i-1][z].type === "unvisited") topHole = z;
+                    if (vert < grid.length && grid[vert][z].type === "unvisited") botHole = z;
+                }
+
+                let count = 0;
+                while ((topHole !== null && vertWall === topHole) || (botHole !== null && vertWall === botHole)){
                     vertWall = this.randomNumber(j + 1, hori - 2);
+                    if (count === 3) break;
+                    count += 1;
                 }
                 for (let z = i; z < vert; z++ ){
                     if (grid[z][vertWall].type === "unvisited") grid[z][vertWall].type = "wall";
@@ -463,6 +484,7 @@ class Grid extends React.Component {
                 }
             } 
 
+            let newHoles = [null, null, null, null];
             // set the holes.
             if (vertAndHor[0] && vertAndHor[1]){
                 newHoles[0] = [this.randomNumber(horiWall + 1, vert), vertWall];
@@ -482,12 +504,13 @@ class Grid extends React.Component {
             }
             this.setState({ grid });
 
-            await buildWall(i, j, horiWall, vertWall, newHoles);
-            await buildWall(horiWall + 1, vertWall + 1, vert, hori, newHoles);
-            await buildWall(horiWall + 1, j, vert, vertWall, newHoles);
-            await buildWall(i, vertWall + 1, horiWall, hori, newHoles);
+            // leftHole, rightHole, topHole, botHole
+            await buildWall(i, j, horiWall, vertWall);
+            await buildWall(horiWall + 1, vertWall + 1, vert, hori);
+            await buildWall(horiWall + 1, j, vert, vertWall);
+            await buildWall(i, vertWall + 1, horiWall, hori);
         }
-        await buildWall(0, 0, grid.length, grid[0].length, [null, null, null, null]);
+        await buildWall(0, 0, grid.length, grid[0].length, null, null, null, null);
     }
     // Once the End node is found this function computes the shortest path using Breath First Search.
     async BFS() {
