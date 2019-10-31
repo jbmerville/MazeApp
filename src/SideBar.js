@@ -32,12 +32,12 @@ class SideBar extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props !== prevProps) {
-            const { reset, recursiveBacktracking, euclidian, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision, recursiveDivision2 } = this.props;
+            const { reset, recursiveBacktracking, depthFirstSearch, aStar, dijkstra, iterativeRandom, BFS, recursiveDivision, recursiveDivision2 } = this.props;
             this.setState({
                 BFS,
                 reset,
                 recursiveBacktracking,
-                euclidian,
+                depthFirstSearch,
                 aStar,
                 dijkstra,
                 iterativeRandom,
@@ -53,7 +53,7 @@ class SideBar extends React.Component {
             recursiveBacktracking,
             dijkstra,
             aStar,
-            euclidian,
+            depthFirstSearch,
             iterativeRandom,
             BFS,
             recursiveDivision,
@@ -88,8 +88,8 @@ class SideBar extends React.Component {
                         text={"A* algorithm"}
                     ></Button>
                     <Button
-                        onClick={euclidian}
-                        text={"Euclidian shortest path"}
+                        onClick={depthFirstSearch}
+                        text={"Detph First Search"}
                         
                     ></Button>
                 </div>

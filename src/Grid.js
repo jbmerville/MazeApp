@@ -8,7 +8,7 @@ class Grid extends React.Component {
         this.reset = this.reset.bind(this);
         this.sleep = this.sleep.bind(this);
         this.recursiveBacktracking = this.recursiveBacktracking.bind(this);
-        this.euclidian = this.euclidian.bind(this);
+        this.depthFirstSearch = this.depthFirstSearch.bind(this);
         this.aStar = this.aStar.bind(this);
         this.dijkstra = this.dijkstra.bind(this);
         this.iterativeRandom = this.iterativeRandom.bind(this);
@@ -296,7 +296,37 @@ class Grid extends React.Component {
         this.setState({solved: true});
     }
 
-    async euclidian() {
+    async depthFirstSearch() {
+        await this.resetNodeOfTypes(["visited", "found"]);
+        const { grid } = this.state;
+        const depthFirstSearchHelper = async (cur, end) => {
+
+            if (cur.node === end) {
+                cur.node.type = "end";
+                this.setState({ grid });
+                cur = cur.parent;
+                await this.resetNodeOfTypes(["visited"]);
+                while (cur.parent !== null){
+                    cur.node.type = "found";
+                    this.setState({ grid });
+                    await this.sleep(10);
+                    cur = cur.parent;
+                }
+                this.setState({solved: true});
+                return null;
+            };
+            let neighbors =  this.getUnvisitedNeighbors(cur.node, true, false);
+            if (neighbors.length === 0 ) return;
+            for(let neighbor of neighbors){
+                neighbor.type = "visited";
+                await this.sleep(10);
+                this.setState({ grid });
+                let res = await depthFirstSearchHelper({node: neighbor, parent: cur}, end);
+                if (res === null) return null;
+            }
+        } 
+        await depthFirstSearchHelper({node: this.getStart(), parent: null}, this.getEnd());
+
     }
 
     async recursiveBacktracking() {
@@ -514,7 +544,7 @@ class Grid extends React.Component {
 
             // leftHole, rightHole, topHole, botHole
             if (horiWall !== null && vertWall !== null) await buildWall(i, j, horiWall, vertWall);
-            if (vertWall !== null) await buildWall(horiWall + 1, vertWall + 1, vert, hori);
+            if (horiWall !== null && vertWall !== null) await buildWall(horiWall + 1, vertWall + 1, vert, hori);
             if (horiWall !== null && vertWall !== null) await buildWall(horiWall + 1, j, vert, vertWall);
             if (horiWall !== null && vertWall !== null) await buildWall(i, vertWall + 1, horiWall, hori);
         }
