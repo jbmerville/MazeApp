@@ -31,12 +31,12 @@ class Grid extends React.Component {
     }
 
     componentDidMount() {
-        this.reset(false);
+        this.reset(true);
     }
 
     // univsited: default;
 
-    reset(withMessage) {
+    reset() {
         const grid = [];
         for (let i = 0; i < this.state.height; i++) {
             const row = [];
@@ -50,7 +50,6 @@ class Grid extends React.Component {
                     d: 0,
                     type: "unvisited"
                 };
-                if (withMessage) this.setDefault(node);
                 if (i === 0 && j === 0) node.type = "start";
                 if (i === this.state.height - 1 && j === this.state.width - 1)
                     node.type = "end";
@@ -60,92 +59,7 @@ class Grid extends React.Component {
         }
         this.setState({ grid: grid });
     }
-
-    // Prints "Hello" when the grid is initiated.
-    setDefault(node) {
-        let i = node.row;
-        let j = node.col;
-        let k = 11;
-        let u = 6;
-        if (i === k) {
-            if (
-                j === u ||
-                j === u + 3 ||
-                j === u + 5 ||
-                j === u + 6 ||
-                j === u + 7 ||
-                j === u + 9 ||
-                j === u + 13 ||
-                j === u + 17 ||
-                j === u + 18 ||
-                j === u + 19 ||
-                j === u + 20
-            )
-                node.type = "wall";
-        }
-        if (i === k + 1) {
-            if (
-                j === u ||
-                j === u + 3 ||
-                j === u + 5 ||
-                j === u + 9 ||
-                j === u + 13 ||
-                j === u + 17 ||
-                j === u + 20
-            )
-                node.type = "wall";
-        }
-        if (i === k + 2) {
-            if (
-                j === u ||
-                j === u + 1 ||
-                j === u + 2 ||
-                j === u + 3 ||
-                j === u + 5 ||
-                j === u + 6 ||
-                j === u + 7 ||
-                j === u + 9 ||
-                j === u + 13 ||
-                j === u + 17 ||
-                j === u + 20
-            )
-                node.type = "wall";
-        }
-        if (i === k + 3) {
-            if (
-                j === u ||
-                j === u + 3 ||
-                j === u + 5 ||
-                j === u + 9 ||
-                j === u + 13 ||
-                j === u + 17 ||
-                j === u + 20
-            )
-                node.type = "wall";
-        }
-        if (i === k + 4) {
-            if (
-                j === u ||
-                j === u + 3 ||
-                j === u + 5 ||
-                j === u + 6 ||
-                j === u + 7 ||
-                j === u + 9 ||
-                j === u + 10 ||
-                j === u + 11 ||
-                j === u + 13 ||
-                j === u + 14 ||
-                j === u + 15 ||
-                j === u + 17 ||
-                j === u + 18 ||
-                j === u + 19 ||
-                j === u + 20
-            )
-                node.type = "wall";
-        }
-        return node;
-    }
-
+ 
     // Turn on hover.
     down = event => {
         const { solved } = this.state;
@@ -330,7 +244,7 @@ class Grid extends React.Component {
     }
 
     async recursiveBacktracking() {
-        await this.resetNodeOfTypes(["visited", "found"]);
+        await this.resetNodeOfTypes(["visited", "found", "wall"]);
         const { grid } = this.state;
         let cur = this.getStart();
         let stack = [cur];
@@ -369,7 +283,7 @@ class Grid extends React.Component {
     }
 
     async iterativeRandom() {
-        await this.resetNodeOfTypes(["visited", "found"]);
+        await this.resetNodeOfTypes(["visited", "found", "wall"]);
         const { height, width, grid } = this.state;
         for (let i = 0; i < height; i++) {
             for (let j = 0; j < width; j++) {
@@ -455,6 +369,7 @@ class Grid extends React.Component {
     }
 
     async recursiveDivision() {
+        await this.resetNodeOfTypes(["visited", "found", "wall"]);
         const { grid  } = this.state;
         const buildWall = async (i, j, vert, hori) => {
             
