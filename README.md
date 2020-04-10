@@ -19,4 +19,4 @@ Path Finder is a web app that shows how a path can be found from two points in a
 NodeJS, Build-React-App, React, Fun!
 
 ## Demo
-Here is a working live demo :  https://jbmerville.github.io/Path-Finder/
+Here is a working live demo :  http://path-finder.jmerville.com/
